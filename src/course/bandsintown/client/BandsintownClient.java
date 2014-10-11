@@ -19,6 +19,7 @@ import java.util.List;
 public class BandsintownClient {
 
     private static final String HTTP_GET = "GET";
+    private static final int HTTP_STATUS_OK = 200;
     private static final String EVENTS_REQUEST_URL_TEMPLATE = "http://api.bandsintown.com/artists/%s/events.json";
     private static final String DATE_FORMAT = "YYYY-MM-DD'T'hh:mm:ss";
 
@@ -61,9 +62,12 @@ public class BandsintownClient {
         con.setDoOutput(true);
         con.connect();
         int responseCode = con.getResponseCode();
-        System.out.println(responseCode);
-        String serverResponse = getStrFromInputStream(con.getInputStream());
-        return serverResponse;
+        if(responseCode == HTTP_STATUS_OK) {
+            System.out.println(responseCode);
+            String serverResponse = getStrFromInputStream(con.getInputStream());
+            return serverResponse;
+        }
+        return "";
     }
 
     private List<Event> parsJsonToEvents(String jsonEvents){
