@@ -8,7 +8,9 @@ import org.apache.commons.codec.EncoderException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class Main {
 
@@ -34,7 +36,10 @@ public class Main {
     }
 
     private static void printEventInformation(Event event) {
-        System.out.println("Event date: " + event.getDatetime());
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault());
+        DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault());
+        System.out.println("Event date: " + dateFormat.format(event.getDatetime()));
+        System.out.println("Event time: " + timeFormat.format(event.getDatetime()));
         System.out.println("Event ticket url: " + event.getTicketUrl());
         Venue venue = event.getVenue();
         System.out.println("Event venue country: " + venue.getCountry());
