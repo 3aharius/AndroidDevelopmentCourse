@@ -25,9 +25,7 @@ public class BandsintownClient {
 
     public List<Event> getEvents(String artistName) throws IOException, EncoderException {
         String requestLink= getRequestLink(artistName);
-        System.out.println(requestLink);
         String response = sendRequest(requestLink);
-        System.out.println(response);
         List<Event> events = parsJsonToEvents(response);
         return events;
     }
@@ -63,7 +61,6 @@ public class BandsintownClient {
         con.connect();
         int responseCode = con.getResponseCode();
         if(responseCode == HTTP_STATUS_OK) {
-            System.out.println(responseCode);
             String serverResponse = getStrFromInputStream(con.getInputStream());
             return serverResponse;
         }
