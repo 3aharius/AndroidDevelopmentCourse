@@ -1,36 +1,32 @@
 package course.bandsintown.client;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import course.bandsintown.entity.Event;
+import course.bandsintown.utils.FileUtil;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-public class BandsintownClient {
+public class HttpClient implements IClient {
 
     private static final String HTTP_GET = "GET";
     private static final int HTTP_STATUS_OK = 200;
     private static final String EVENTS_REQUEST_URL_TEMPLATE = "http://api.bandsintown.com/artists/%s/events.json";
-    private static final String DATE_FORMAT = "YYYY-MM-DD'T'hh:mm:ss";
 
-    public List<Event> getEvents(String artistName) throws IOException, EncoderException {
-        String requestLink= getRequestLink(artistName);
+    public String getData(String artistName) throws IOException {
+        String requestLink = null;
+        try {
+            requestLink = geberateRequestLink(artistName);
+        } catch (EncoderException ex) {
+            throw new IOException(ex);
+        }
         String response = sendRequest(requestLink);
-        List<Event> events = parsJsonToEvents(response);
-        return events;
+        saveDataToStorage(artistName, response);
+        return response;
     }
 
-    private String getRequestLink(String artistName) throws EncoderException {
+    private String geberateRequestLink(String artistName) throws EncoderException {
         URLCodec codec = new URLCodec();
         String encodedArtist = codec.encode(artistName).replaceAll("\\+", "%20");
         String requestLink = String.format(EVENTS_REQUEST_URL_TEMPLATE, encodedArtist);
@@ -67,9 +63,9 @@ public class BandsintownClient {
         return "";
     }
 
-    private List<Event> parsJsonToEvents(String jsonEvents){
-        Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
-        List<Event> events = gson.fromJson(jsonEvents, new TypeToken<ArrayList<Event>>() {}.getType());
-        return events;
+    private void saveDataToStorage(String artistName, String data) throws IOException {
+        File eventsFile = FileUtil.getEventsFile(artistName);
+        FileUtil.saveDataToFile(eventsFile, data);
     }
+
 }

@@ -1,8 +1,13 @@
 package course.bandsintown.main;
 
-import course.bandsintown.client.BandsintownClient;
+import course.bandsintown.service.EventsService;
+import course.bandsintown.client.FileClient;
+import course.bandsintown.client.HttpClient;
+import course.bandsintown.client.IClient;
 import course.bandsintown.entity.Event;
 import course.bandsintown.entity.Venue;
+import course.bandsintown.handler.JsonHandler;
+import course.bandsintown.utils.FileUtil;
 import org.apache.commons.codec.EncoderException;
 
 import java.io.BufferedReader;
@@ -20,9 +25,11 @@ public class Main {
         BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
         String artistName = consoleReader.readLine();
         System.out.println();
+        IClient client = getClient(artistName);
+        JsonHandler dataHandler = new JsonHandler();
+        EventsService service = new EventsService(client, dataHandler);
         try {
-            BandsintownClient client = new BandsintownClient();
-            List<Event> events = client.getEvents(artistName);
+            List<Event> events = service.getEvents(artistName);
             if(events != null && !events.isEmpty()){
                 for(Event event : events) {
                     printEventInformation(event);
@@ -30,8 +37,16 @@ public class Main {
             } else {
                 System.out.println("Sorry, have nothing for you...");
             }
-        } catch (IOException | EncoderException ex) {
+        } catch (IOException ex) {
             System.out.println("An error occurred while processing your request. Please, try again.");
+        }
+    }
+
+    private static IClient getClient(String artistName) {
+        if(FileUtil.checkEventFileExists(artistName)) {
+            return new FileClient();
+        } else {
+            return new HttpClient();
         }
     }
 
