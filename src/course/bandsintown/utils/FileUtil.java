@@ -1,10 +1,15 @@
 package course.bandsintown.utils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 public class FileUtil {
 
     private static  final String STORAGE_FOLDER = "storage";
+    private static  final String JSON_EXTENSION = ".json";
 
     public static boolean checkEventFileExists(String artistName){
         return getEventsFile(artistName).exists();
@@ -18,7 +23,7 @@ public class FileUtil {
 
     public static File getEventsFile(String artistName) {
         File storage = getStorageFolder();
-        File eventFile = new File(storage.getAbsolutePath() + File.separator + artistName + ".json");
+        File eventFile = new File(storage.getAbsolutePath() + File.separator + artistName + JSON_EXTENSION);
         return eventFile;
     }
 

@@ -4,7 +4,11 @@ import course.bandsintown.utils.FileUtil;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
